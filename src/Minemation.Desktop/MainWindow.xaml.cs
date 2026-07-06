@@ -4,11 +4,22 @@ namespace Minemation.Desktop;
 
 public partial class MainWindow : Window
 {
-    public MainWindow(string role = "Admin")
+    private readonly string _currentRole;
+    private readonly string _currentUserName;
+    private readonly int _currentPersonelId;
+
+
+    private bool CanManage => _currentRole == "Admin";
+
+    public MainWindow(string role = "Admin", string userName = "", int personelId = 0)
     {
         InitializeComponent();
-        
-        SetupRole(role);
+
+        _currentRole = NormalizeRole(role);
+        _currentUserName = string.IsNullOrWhiteSpace(userName) ? "Kullanıcı" : userName;
+        _currentPersonelId = personelId;
+
+        SetupRole();
     }
 
     private void NavPersonnel_Click(object sender, RoutedEventArgs e)
@@ -18,15 +29,70 @@ public partial class MainWindow : Window
     }
 
     private void NavShift_Click(object sender, RoutedEventArgs e)
+{
+    MainContent.Content = new ShiftView(CanManage, _currentPersonelId);
+    UpdateNavStyles(NavShift);
+}
+
+    private void NavHome_Click(object sender, RoutedEventArgs e)
     {
-        MainContent.Content = new ShiftView();
-        UpdateNavStyles(NavShift);
+        if (CanManage)
+        {
+            MainContent.Content = new AdminHomeView();
+        }
+        else
+        {
+            MainContent.Content = new FieldHomeView(_currentPersonelId);
+        }
+
+        UpdateNavStyles(NavHome);
     }
-    
+
+    private void NavEquipment_Click(object sender, RoutedEventArgs e)
+    {
+        MainContent.Content = new EquipmentView();
+        UpdateNavStyles(NavEquipment);
+    }
+
+    private void NavIncidents_Click(object sender, RoutedEventArgs e)
+    {
+        MainContent.Content = new IncidentView(CanManage, _currentPersonelId);
+        UpdateNavStyles(NavIncidents);
+    }
+
+    private void NavReports_Click(object sender, RoutedEventArgs e)
+    {
+        MainContent.Content = new ReportView();
+        UpdateNavStyles(NavReports);
+    }
+
+    private void NavRisk_Click(object sender, RoutedEventArgs e)
+    {
+        MainContent.Content = new RiskMonitoringView();
+        UpdateNavStyles(NavRisk);
+    }
+
+    private void NavMap_Click(object sender, RoutedEventArgs e)
+    {
+        OpenMapPage();
+    }
+
+    public void OpenMapPage()
+    {
+        MainContent.Content = new MapView(_currentPersonelId, CanManage);
+        UpdateNavStyles(NavMap);
+    }
+
+    private void NavHealth_Click(object sender, RoutedEventArgs e)
+    {
+        MainContent.Content = new HealthView(_currentPersonelId, CanManage);
+        UpdateNavStyles(NavHealth);
+    }
+
     private void UpdateNavStyles(System.Windows.Controls.Button activeBtn)
     {
-        var btns = new[] { NavHome, NavPersonnel, NavShift, NavEquipment, NavIncidents, NavReports, NavRisk, NavMap };
-        foreach(var btn in btns)
+        var btns = new[] { NavHome, NavPersonnel, NavShift, NavEquipment, NavIncidents, NavReports, NavRisk, NavMap, NavHealth };
+        foreach (var btn in btns)
         {
             if(btn == null) continue;
             
@@ -44,38 +110,75 @@ public partial class MainWindow : Window
         }
     }
 
-    private void SetupRole(string role)
+    private void SetupRole()
     {
-        if (role == "Admin") // Yönetici
+        UserNameText.Text = _currentUserName;
+
+        if (_currentRole == "Admin")
         {
-            NavPersonnel.Visibility = Visibility.Visible;
-            NavEquipment.Visibility = Visibility.Visible;
-            NavReports.Visibility = Visibility.Visible;
-            NavRisk.Visibility = Visibility.Visible;
-            
-            NavShift.Content = "Vardiya";
-            NavIncidents.Content = "Vakalar";
-            UserNameText.Text = "Ahmet Yılmaz";
-            
-            // Default view for Admin
-            MainContent.Content = new PersonnelView();
-            UpdateNavStyles(NavPersonnel);
+            ApplyAdminMenu();
+            MainContent.Content = new AdminHomeView();
+            UpdateNavStyles(NavHome);
         }
-        else // Saha Personeli
+        else
         {
-            NavPersonnel.Visibility = Visibility.Collapsed;
-            NavEquipment.Visibility = Visibility.Collapsed;
-            NavReports.Visibility = Visibility.Collapsed;
-            NavRisk.Visibility = Visibility.Collapsed;
-            
-            NavShift.Content = "Vardiyalarım";
-            NavIncidents.Content = "Vakalarım";
-            UserNameText.Text = "Mehmet Kaya";
-            
-            // Saha Personeli Personel ekranını göremez, o yüzden Vardiyalarım ekranına at
-            MainContent.Content = new ShiftView();
-            UpdateNavStyles(NavShift);
+            ApplyFieldMenu();
+            MainContent.Content = new FieldHomeView(_currentPersonelId);
+            UpdateNavStyles(NavHome);
         }
+    }
+
+    private void ApplyAdminMenu()
+    {
+        NavHome.Visibility = Visibility.Visible;
+        NavPersonnel.Visibility = Visibility.Visible;
+        NavShift.Visibility = Visibility.Visible;
+        NavEquipment.Visibility = Visibility.Visible;
+        NavIncidents.Visibility = Visibility.Visible;
+        NavReports.Visibility = Visibility.Visible;
+        NavRisk.Visibility = Visibility.Visible;
+        NavMap.Visibility = Visibility.Visible;
+
+        NavHealth.Visibility = Visibility.Collapsed;
+
+        NavShift.Content = "Vardiya";
+        NavIncidents.Content = "Vakalar";
+    }
+
+    private void ApplyFieldMenu()
+    {
+        NavHome.Visibility = Visibility.Visible;
+        NavPersonnel.Visibility = Visibility.Collapsed;
+        NavEquipment.Visibility = Visibility.Collapsed;
+        NavReports.Visibility = Visibility.Collapsed;
+        NavRisk.Visibility = Visibility.Collapsed;
+
+        NavShift.Visibility = Visibility.Visible;
+        NavIncidents.Visibility = Visibility.Visible;
+        NavMap.Visibility = Visibility.Visible;
+        NavHealth.Visibility = Visibility.Visible;
+
+        NavHealth.Content = "Sağlık";
+        NavShift.Content = "Vardiyalarım";
+        NavIncidents.Content = "Vakalarım";
+    }
+
+    private static string NormalizeRole(string role)
+    {
+        if (string.IsNullOrWhiteSpace(role))
+            return "Field";
+
+        return role.Trim().ToLowerInvariant() switch
+        {
+            "admin" => "Admin",
+            "yonetici" => "Admin",
+            "yönetici" => "Admin",
+            "idari personel" => "Admin",
+            "field" => "Field",
+            "saha" => "Field",
+            "saha personeli" => "Field",
+            _ => role
+        };
     }
 
     private bool _isDarkTheme = true;
@@ -110,5 +213,24 @@ public partial class MainWindow : Window
         {
             themeIcon.Kind = _isDarkTheme ? MaterialDesignThemes.Wpf.PackIconKind.WeatherSunny : MaterialDesignThemes.Wpf.PackIconKind.WeatherNight;
         }
+    }
+
+    private void UserMenuButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (UserMenuButton.ContextMenu is null)
+            return;
+
+        UserMenuButton.ContextMenu.PlacementTarget = UserMenuButton;
+        UserMenuButton.ContextMenu.IsOpen = true;
+    }
+
+    private void LogoutMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        var loginView = new LoginView();
+
+        System.Windows.Application.Current.MainWindow = loginView;
+        loginView.Show();
+
+        Close();
     }
 }

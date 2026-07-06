@@ -30,16 +30,24 @@
 
                 <!-- Navigation Tabs -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,0">
-                    <Button x:Name="NavHome" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0">
+                    <Button x:Name="NavHome" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" Click="NavHome_Click">
                         <materialDesign:PackIcon Kind="Home" Width="24" Height="24" />
                     </Button>
+
                     <Button x:Name="NavPersonnel" Content="Personel" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource PrimaryBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="0,0,0,3" Height="50" Margin="0,0,5,0" Click="NavPersonnel_Click" />
                     <Button x:Name="NavShift" Content="Vardiya" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" Click="NavShift_Click" />
-                    <Button x:Name="NavEquipment" Content="Ekipman" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" />
-                    <Button x:Name="NavIncidents" Content="Vakalar" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" />
-                    <Button x:Name="NavReports" Content="Raporlar" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" />
-                    <Button x:Name="NavRisk" Content="Risk İzleme" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" />
-                    <Button x:Name="NavMap" Content="Harita" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" />
+                    <Button x:Name="NavEquipment" Content="Ekipman" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" Click="NavEquipment_Click" />
+                    <Button x:Name="NavIncidents" Content="Vakalar" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" Click="NavIncidents_Click" />
+                    <Button x:Name="NavReports" Content="Raporlar" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" Click="NavReports_Click" />
+                    <Button x:Name="NavRisk" Content="Risk İzleme" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" Click="NavRisk_Click" />
+                    <Button x:Name="NavMap" Content="Harita" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" Margin="0,0,5,0" Click="NavMap_Click" />
+                    <Button x:Name="NavHealth"
+                            Content="Sağlık"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="{DynamicResource TextSecondaryBrush}"
+                            Height="50"
+                            Margin="0,0,5,0"
+                            Click="NavHealth_Click" />
                 </StackPanel>
 
                 <!-- User Profile -->
@@ -47,8 +55,38 @@
                     <Button x:Name="ThemeToggleButton" Style="{StaticResource MaterialDesignIconForegroundButton}" Click="ThemeToggleButton_Click" ToolTip="Temayı Değiştir" Margin="0,0,15,0" Foreground="{DynamicResource TextSecondaryBrush}">
                         <materialDesign:PackIcon x:Name="ThemeIcon" Kind="WeatherSunny" Width="24" Height="24" />
                     </Button>
-                    <TextBlock x:Name="UserNameText" Text="Ahmet Yılmaz" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <materialDesign:PackIcon Kind="AccountCircle" Width="40" Height="40" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <Button x:Name="UserMenuButton"
+        Style="{StaticResource MaterialDesignFlatButton}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        Click="UserMenuButton_Click"
+        Padding="8,4">
+
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Çıkış Yap"
+                      Click="LogoutMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="Logout" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="UserNameText"
+                   Text="Kullanıcı"
+                   FontSize="16"
+                   Foreground="{DynamicResource TextPrimaryBrush}"
+                   VerticalAlignment="Center"
+                   Margin="0,0,10,0"/>
+
+                            <materialDesign:PackIcon Kind="AccountCircle"
+                                 Width="40"
+                                 Height="40"
+                                 Foreground="{DynamicResource TextSecondaryBrush}"
+                                 VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>
